@@ -20,22 +20,6 @@
 - **Lightweight**: Minimal overhead and easy to use, making it suitable for any Express application.
 - **Modular Design**: Easily extendable for custom error handling and logging.
 
-## Example Error Request with details
-
-![customError](./public/customError.png)
-
-## Example Error Request
-
-![customError 2](./public/errorFormat.png)
-
-## Error logs
-
-![Error Log file](./public/errorLog.png)
-
-## Success logs
-
-![Success Log File](./public/successLog.png)
-
 ## Installation
 
 You can install Biezor via npm:
