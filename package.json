@@ -1,6 +1,6 @@
 {
   "name": "biezor",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "main": "dist/index.js",
   "type": "commonjs",
   "scripts": {

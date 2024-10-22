@@ -34,7 +34,9 @@ export const logSuccessToFile = ({
   const timestamp = new Date().toISOString();
 
   const logEntry = [
-    isFirstLog ? `Thank you for using this application! \n` : "", // Add welcome message only on the first log
+    isFirstLog
+      ? `Thank you for installing biezor! Read documentation at: https://www.npmjs.com/package/biezor\nPlease consider donating to enhance this package. buymeacoffee.com/sivam_manoj\n`
+      : "", // Add welcome message only on the first log
     `===========================================================`,
     `Timestamp   : ${timestamp}`,
     `Request ID  : ${requestId}`,
