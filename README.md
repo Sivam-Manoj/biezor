@@ -1,4 +1,4 @@
-# Biezor - Powerful Express Async Error Handler with Middleware
+# Biezor - Powerful Express Async Error Handler with Middleware And Error, Success, Performance Logger
 
 **Biezor** is a lightweight middleware package designed for handling asynchronous errors in Express applications. With Biezor, you don’t need to write your own error-handling middleware; just import and configure it to manage async errors gracefully and provide consistent, structured error responses.
 
@@ -6,13 +6,24 @@
 
 - **Plug-and-Play Integration**: Quickly integrate Biezor into your Express app without the need for custom middleware.
 - **Automatic Error Handling**: Automatically catches and handles asynchronous errors in routes and middleware.
+- **Automatic Logging of Errors**: Logs asynchronous errors in the `logs` folder with detailed information.
+- **Logging of Successful Requests**: Automatically logs successful requests in the `logs/success.log` file, including request details for performance monitoring and auditing.
+- **Client IP Address Logging**: Captures and logs the client's IP address for each request, enhancing traceability and debugging.
 - **Customizable Error Responses**: Provide custom error messages along with status codes and optional additional details.
 - **Detailed Error Stacks**: Displays detailed error stack traces in development mode for easier debugging.
+- **Performance Monitoring**: Measures the duration of request handling, helping identify slow routes and performance bottlenecks.
 - **TypeScript Support**: Fully compatible with TypeScript, enabling type safety and better tooling.
 - **JavaScript Compatibility**: Works seamlessly in regular JavaScript applications.
 - **Flexible Error Handling**: Supports both direct error throwing and try-catch scenarios for greater flexibility.
 - **Lightweight**: Minimal overhead and easy to use, making it suitable for any Express application.
 - **Modular Design**: Easily extendable for custom error handling and logging.
+
+## Installation
+
+You can install Biezor via npm:
+
+````bash
+npm install biezor
 
 ## Installation
 
@@ -23,13 +34,20 @@ npm install biezor
 # or
 yarn add biezor
 
-```
+````
+
 #### set your .env file:
+
 ```env
-NODE_ENV = "development" // use production when deployment(defualt production). 
+NODE_ENV = "development" // use production when deployment(defualt production).
+```
+
+```env
+LOG = false // if you dont want to create and log errors declare LOG as false(defaul true).
 ```
 
 #### typescript example
+
 ```typescript
 // server.ts
 import { configDotenv } from "dotenv";
@@ -46,20 +64,26 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // Example route that triggers an error
-app.get("/error", biezor(async (req, res, next) => {
-  next(new AsyncError("This is an example error!"));
-}));
+app.get(
+  "/error",
+  biezor(async (req, res, next) => {
+    next(new AsyncError("This is an example error!"));
+  })
+);
 
-app.get("/try-catch-error", biezor(async (req, res, next) => {
-  try {
-    throw new AsyncError("This is a try-catch error example", 403, {
-      reason: "debugging error when try-catch",
-      solution: "try-catch error solution",
-    });
-  } catch (error) {
-    next(error);
-  }
-}));
+app.get(
+  "/try-catch-error",
+  biezor(async (req, res, next) => {
+    try {
+      throw new AsyncError("This is a try-catch error example", 403, {
+        reason: "debugging error when try-catch",
+        solution: "try-catch error solution",
+      });
+    } catch (error) {
+      next(error);
+    }
+  })
+);
 
 // Example working route
 app.get("/", (req, res) => {
@@ -78,9 +102,10 @@ app.listen(PORT, () => {
 ```
 
 #### javascript example
+
 ```javascript
 // server.js
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const pkg = require("biezor");
 
@@ -92,20 +117,26 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // Example route that triggers an error
-app.get("/error", biezor(async (req, res, next) => {
-  next(new AsyncError("This is an example error!"));
-}));
+app.get(
+  "/error",
+  biezor(async (req, res, next) => {
+    next(new AsyncError("This is an example error!"));
+  })
+);
 
-app.get("/try-catch-error", biezor(async (req, res, next) => {
-  try {
-    throw new AsyncError("This is a try-catch error example", 403, {
-      reason: "debugging error when try-catch",
-      solution: "try-catch error solution",
-    });
-  } catch (error) {
-    next(error);
-  }
-}));
+app.get(
+  "/try-catch-error",
+  biezor(async (req, res, next) => {
+    try {
+      throw new AsyncError("This is a try-catch error example", 403, {
+        reason: "debugging error when try-catch",
+        solution: "try-catch error solution",
+      });
+    } catch (error) {
+      next(error);
+    }
+  })
+);
 
 // Example working route
 app.get("/", (req, res) => {
@@ -123,11 +154,9 @@ app.listen(PORT, () => {
 });
 ```
 
-
 ## Use Cases
 
 - **API Development**: Effortlessly handle asynchronous errors in RESTful APIs. With Biezor, you ensure that clients receive structured error responses, making it easier for them to understand what went wrong.
-  
 - **Middleware Integration**: Quickly integrate Biezor into existing Express middleware to enhance error handling across your application without needing to write custom error handling code.
 
 - **Debugging**: Utilize detailed error messages and stack traces provided during development to identify and resolve issues efficiently. Biezor's error handling makes it simple to track down problems in your async routes.
@@ -143,6 +172,7 @@ app.listen(PORT, () => {
 Wraps an asynchronous route handler to catch and handle errors.
 
 - **Parameters**:
+
   - `asyncRouteHandler` (Function): The async function to wrap.
 
 - **Returns**: A wrapped function that forwards any error to the next middleware.
@@ -166,8 +196,8 @@ Custom error class that you can throw to generate an error with a specific statu
   - `statusCode` (number): The HTTP status code (default is 500).
   - `details` (object): Optional additional details about the error.
 
-
 ## MIT License
+
 ```
 Copyright (c) 2024 Sivam Manoj
 
@@ -177,6 +207,7 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 
 2. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-For any inquiries, you can contact me at:  
+For any inquiries, you can contact me at:
 ```
+
 **Email**: [manom8193@gmail.com](mailto:manom8193@gmail.com)
