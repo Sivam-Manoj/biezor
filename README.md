@@ -2,6 +2,8 @@
 
 **Biezor** is a lightweight middleware package designed for handling asynchronous errors in Express applications. With Biezor, you don’t need to write your own error-handling middleware; just import and configure it to manage async errors gracefully and provide consistent, structured error responses.
 
+#### Please consider donating to enhance this package. [Buy Me a Coffee](https://www.buymeacoffee.com/sivam_manoj)
+
 ## Features
 
 - **Plug-and-Play Integration**: Quickly integrate Biezor into your Express app without the need for custom middleware.
@@ -17,6 +19,22 @@
 - **Flexible Error Handling**: Supports both direct error throwing and try-catch scenarios for greater flexibility.
 - **Lightweight**: Minimal overhead and easy to use, making it suitable for any Express application.
 - **Modular Design**: Easily extendable for custom error handling and logging.
+
+## Example Error Request with details
+
+![customError](./public/customError.png)
+
+## Example Error Request
+
+![customError 2](./public/errorFormat.png)
+
+## Error logs
+
+![Error Log file](./public/errorLog.png)
+
+## Success logs
+
+![Success Log File](./public/successLog.png)
 
 ## Installation
 
