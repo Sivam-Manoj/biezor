@@ -1,6 +1,6 @@
 {
   "name": "biezor",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "main": "dist/index.js",
   "type": "commonjs",
   "scripts": {
@@ -24,7 +24,7 @@
   ],
   "author": "Sivam Manoj",
   "license": "MIT",
-  "description": "Biezor is a latest powerful and easy-to-use async error handler middleware for Express.js, designed to simplify error management in web applications. Enhance your API's reliability with structured error responses and detailed debugging information.",
+  "description": "Biezor is a powerful and easy-to-use async error handler middleware for Express.js, designed to simplify error management in web applications. Enhance your API's reliability with structured error responses and detailed debugging information. Biezor also features robust logging capabilities, automatically logging both errors and successful requests, including detailed information such as request ID, method, URL, status code, duration, and client IP address, providing you with comprehensive insights into your application's performance and usage.",
   "dependencies": {
     "biezor": "file:",
     "express": "^5.0.1",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
-    "@types/node": "^22.7.7",
+    "@types/node": "^22.7.8",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
