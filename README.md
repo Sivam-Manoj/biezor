@@ -50,52 +50,78 @@ LOG = false // if you dont want to create and log errors declare LOG as false(de
 
 ```typescript
 // server.ts
-import { configDotenv } from "dotenv";
+// Import necessary modules
+import { configDotenv } from "dotenv"; // Module to load environment variables from a .env file
+("dotenv/config.js"); // Ensure dotenv config is loaded correctly
+import express, { Request, Response, NextFunction } from "express"; // Import the Express framework and types
+import pkg, { AsyncError } from "biezor"; // Import the Biezor middleware package
+
+// Load environment variables from .env file
 configDotenv();
-import express from "express";
-import pkg from "biezor";
 
-const { biezor, biezorMiddleware, AsyncError } = pkg;
+// Destructure the required components from the Biezor package
+const { biezor, biezorMiddleware } = pkg;
 
+// Create an instance of an Express application
 const app = express();
-const PORT = process.env.PORT || 3000;
+// Define the port for the server to listen on
+const PORT: number = parseInt(process.env.PORT || "3000"); // Use the PORT from environment variables or default to 3000
 
 // Middleware to parse JSON requests
-app.use(express.json());
+app.use(express.json()); // Allows the application to parse JSON payloads in incoming requests
 
-// Example route that triggers an error
+/**
+ * To avoid logging errors, simply use LOG = false in your .env file.
+ */
+
+// Example route that triggers an error using the AsyncError class
 app.get(
   "/error",
-  biezor(async (req, res, next) => {
-    next(new AsyncError("This is an example error!"));
+  biezor(async (req: Request, res: Response, next: NextFunction) => {
+    // Trigger an error with the AsyncError class
+    next(
+      new AsyncError("This is an error", 404, {
+        detail: "Error when sending GET request", // This error will be logged in logs/errors.log
+      })
+    );
   })
 );
 
+// Example route demonstrating error handling with try-catch
 app.get(
   "/try-catch-error",
-  biezor(async (req, res, next) => {
+  biezor(async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // Simulate an error being thrown
       throw new AsyncError("This is a try-catch error example", 403, {
-        reason: "debugging error when try-catch",
-        solution: "try-catch error solution",
+        reason: "Debugging error when using try-catch",
+        solution: "Consider implementing better error handling",
       });
     } catch (error) {
+      // Pass the error to the next middleware for handling
       next(error);
     }
   })
 );
 
-// Example working route
-app.get("/", (req, res) => {
-  res.send("Hello, World!");
-});
+// Example working route for demonstration
+app.get(
+  "/",
+  biezor(async (req: Request, res: Response) => {
+    // This will be executed if no error is thrown, and logs successful requests in logs/success.log file
+
+    // Send a response for successful requests
+    res.send("Hello, World!");
+  })
+);
 
 // Biezor error-handling middleware
-app.use((err, req, res, next) => {
-  biezorMiddleware(err, req, res, next);
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  // Pass the error to the Biezor middleware for structured error handling
+  biezorMiddleware(err, res, req, next);
 });
 
-// Start the server
+// Start the server and listen on the specified port
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
@@ -104,51 +130,77 @@ app.listen(PORT, () => {
 #### javascript example
 
 ```javascript
-// server.js
-require("dotenv").config();
-const express = require("express");
-const pkg = require("biezor");
+// server.ts
+// Import necessary modules
+import { configDotenv } from "dotenv"; // Module to load environment variables from a .env file
+("dotenv/config.js"); // Ensure dotenv config is loaded correctly
+import express from "express"; // Import the Express framework
+import pkg from "biezor"; // Import the Biezor middleware package
 
+// Load environment variables from .env file
+configDotenv();
+
+// Destructure the required components from the Biezor package
 const { biezor, biezorMiddleware, AsyncError } = pkg;
+
+// Create an instance of an Express application
 const app = express();
-const PORT = process.env.PORT || 3000;
+// Define the port for the server to listen on
+const PORT = process.env.PORT || 3000; // Use the PORT from environment variables or default to 3000
 
 // Middleware to parse JSON requests
-app.use(express.json());
+app.use(express.json()); // Allows the application to parse JSON payloads in incoming requests
 
-// Example route that triggers an error
+/**to avoid logging errors simply use LOG = false in your env file*/
+
+// Example route that triggers an error using the AsyncError class
 app.get(
   "/error",
   biezor(async (req, res, next) => {
-    next(new AsyncError("This is an example error!"));
+    // Trigger an error with the AsyncError class
+    next(
+      new AsyncError("This is an error", 404, {
+        detail: "Error when sending GET request", //this error logged in the logs/errors.log
+      })
+    );
   })
 );
 
+// Example route demonstrating error handling with try-catch
 app.get(
   "/try-catch-error",
   biezor(async (req, res, next) => {
     try {
+      // Simulate an error being thrown
       throw new AsyncError("This is a try-catch error example", 403, {
-        reason: "debugging error when try-catch",
-        solution: "try-catch error solution",
+        reason: "Debugging error when using try-catch",
+        solution: "Consider implementing better error handling",
       });
     } catch (error) {
+      // Pass the error to the next middleware for handling
       next(error);
     }
   })
 );
 
-// Example working route
-app.get("/", (req, res) => {
-  res.send("Hello, World!");
-});
+// Example working route for demonstration
+app.get(
+  "/",
+  biezor(async (req, res) => {
+    // it will  be executed if no error is thrown and logs successfull requests in logs/success.log file
+
+    // Send a response for successful requests
+    res.send("Hello, World!");
+  })
+);
 
 // Biezor error-handling middleware
 app.use((err, req, res, next) => {
-  biezorMiddleware(err, req, res, next);
+  // Pass the error to the Biezor middleware for structured error handling
+  biezorMiddleware(err, res, req, next);
 });
 
-// Start the server
+// Start the server and listen on the specified port
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
