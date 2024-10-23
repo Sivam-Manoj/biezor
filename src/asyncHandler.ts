@@ -36,15 +36,20 @@ const enhancedAsyncHandler = (
         const clientIp =
           req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 
+        // Check if logging should occur
+        const logEnabled = process.env.LOG !== "false"; // Log if LOG is not explicitly set to "false"
         // Log the successful request using the success logger
-        logSuccessToFile({
-          requestId: req.id || "N/A", // Include the request ID for traceability (can be generated in middleware)
-          method: req.method, // HTTP method (GET, POST, etc.)
-          url: req.originalUrl, // The original URL of the request
-          statusCode: res.statusCode, // The HTTP status code of the response
-          duration: duration.toFixed(2), // Duration of the request handling in milliseconds, fixed to two decimal points
-          clientIp: clientIp as string, // The client's IP address
-        });
+
+        if (logEnabled) {
+          logSuccessToFile({
+            requestId: req.id || "N/A", // Include the request ID for traceability (can be generated in middleware)
+            method: req.method, // HTTP method (GET, POST, etc.)
+            url: req.originalUrl, // The original URL of the request
+            statusCode: res.statusCode, // The HTTP status code of the response
+            duration: duration.toFixed(2), // Duration of the request handling in milliseconds, fixed to two decimal points
+            clientIp: clientIp as string, // The client's IP address
+          });
+        }
       }
     }
   });

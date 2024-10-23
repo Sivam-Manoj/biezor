@@ -1,4 +1,4 @@
-# Biezor - Powerful Express Async Error Handler with Middleware And Error, Success, Performance Logger
+# Biezor - Powerful lightweight Express Async Error Handler Middleware And Error, Success, Performance Logger
 
 **Biezor** is a lightweight middleware package designed for handling asynchronous errors in Express applications. With Biezor, you don’t need to write your own error-handling middleware; just import and configure it to manage async errors gracefully and provide consistent, structured error responses.
 
@@ -118,7 +118,7 @@ app.get(
 );
 
 // Biezor error-handling middleware
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: any, res: Response, req: Request, next: NextFunction) => {
   // Pass the error to the Biezor middleware for structured error handling
   biezorMiddleware(err, res, req, next);
 });
@@ -197,7 +197,7 @@ app.get(
 );
 
 // Biezor error-handling middleware
-app.use((err, req, res, next) => {
+app.use((err, res, req, next) => {
   // Pass the error to the Biezor middleware for structured error handling
   biezorMiddleware(err, res, req, next);
 });
