@@ -1,12 +1,27 @@
 import * as fs from "fs";
 import * as path from "path";
-import { errorMessages } from "../errorMessages"; // Import your error messages
+import { errorMessages } from "../errorMessages";
+
+// Function to format the timestamp in the desired timezone (GMT +5:30 in this case)
+const formatTimestamp = (date: Date, timezoneOffset: number) => {
+  // Convert UTC time to the desired timezone
+  const localTime = new Date(date.getTime() + timezoneOffset * 60 * 1000);
+
+  // Format the time to "DD-MM-YYYY HH:mm:ss" format
+  const day = String(localTime.getDate()).padStart(2, "0");
+  const month = String(localTime.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const year = localTime.getFullYear();
+  const hours = String(localTime.getHours()).padStart(2, "0");
+  const minutes = String(localTime.getMinutes()).padStart(2, "0");
+  const seconds = String(localTime.getSeconds()).padStart(2, "0");
+
+  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+};
 
 // Function to log errors to 'logs/errors.log'
 export const logErrorToFile = (message: string, details: any = null) => {
-  // Use process.cwd() to get the project's root directory
   const projectRoot = process.cwd();
-  const logsDir = path.join(projectRoot, "logs"); // Create 'logs' in the user's project root
+  const logsDir = path.join(projectRoot, "logs");
   const logFile = path.join(logsDir, "errors.log");
 
   // Create the 'logs' directory if it doesn't exist
@@ -14,58 +29,56 @@ export const logErrorToFile = (message: string, details: any = null) => {
     fs.mkdirSync(logsDir, { recursive: true });
   }
 
-  // Check if this is the first error being logged by checking if the log file exists
+  // Check if this is the first error being logged
   const isFirstLog = !fs.existsSync(logFile);
 
-  // Function to format the stack trace for better readability
+  // Format the stack trace for better readability
   const formatStackTrace = (stack: string | undefined) => {
     if (!stack) return "No stack trace available";
-
-    // Split stack trace into lines and indent each line
     return stack
       .split("\n")
-      .map((line) => `    ${line}`) // Indent stack trace for better readability
+      .map((line) => `    ${line}`)
       .join("\n");
   };
 
-  // Prepare log entry with a clear structure and formatting
-  const timestamp = new Date().toISOString();
+  // Set the timezone offset to GMT +5:30 (330 minutes)
+  const timezoneOffset = 5.5 * 60; // Convert hours to minutes
+  const timestamp = formatTimestamp(new Date(), timezoneOffset);
 
-  // Determine the status code and relevant error message
-  const statusCode = details?.statusCode || 500; // Default to 500 if no status code is provided
-  const statusMessage = errorMessages[statusCode] || "Unknown Error"; // Get the relevant error message
+  // Prepare the log entry
+  const statusCode = details?.statusCode || 500;
+  const statusMessage = errorMessages[statusCode] || "Unknown Error";
 
   const logEntry = [
     isFirstLog
       ? `Thank you for installing biezor! Read documentation at: https://www.npmjs.com/package/biezor\nPlease consider donating to enhance this package. buymeacoffee.com/sivam_manoj\n`
-      : "", // Add welcome message only on the first log
+      : "",
     `===========================================================`,
-    `Timestamp   : ${timestamp}`,
+    `Timestamp   : ${timestamp}`, // Formatted timestamp
     `Message     : ${message}`,
     `-----------------------------------------------------------`,
-    `Status Code : ${statusCode}`, // Include status code
-    `Status Message : ${statusMessage}`, // Include relevant status message
+    `Status Code : ${statusCode}`,
+    `Status Message : ${statusMessage}`,
     `Details:`,
     details
       ? Object.entries(details)
           .map(([key, value]) => {
-            // Avoid logging status code and stack again if included in details
-            if (key === "statusCode" || key === "stack") return ""; // Skip these keys to avoid repetition
+            if (key === "statusCode" || key === "stack") return "";
             return `  ${key}: ${
               typeof value === "object" ? JSON.stringify(value, null, 2) : value
             }`;
           })
-          .filter(Boolean) // Remove empty strings
-          .join("\n") // Join formatted details into a single string
+          .filter(Boolean)
+          .join("\n")
       : "No additional details available",
     `-----------------------------------------------------------`,
     `Stack Trace:`,
     details?.stack
       ? formatStackTrace(details.stack)
-      : "No stack trace available", // Format the stack trace if available
+      : "No stack trace available",
     `===========================================================\n`,
   ].join("\n");
 
-  // Append the formatted log entry to the log file
+  // Append the log entry to the log file
   fs.appendFileSync(logFile, logEntry, "utf8");
 };
